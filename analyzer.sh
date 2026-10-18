@@ -62,12 +62,15 @@ count_commits() {
 health_check() {
     local commits_24h=$(count_commits 1)
     local hours=24
-    local cph=$(echo "scale=2; $commits_24h / $hours" | bc 2>/dev/null || echo "0")
+    # Keep two truncated decimal places and a leading zero for valid JSON.
+    local cph
+    printf -v cph '%d.%02d' "$((commits_24h / hours))" "$((commits_24h * 100 / hours % 100))"
     
     # Get learning commits
-    local learning=$(git log --since="1 day ago" --oneline 2>/dev/null | grep -ci "learning\|meta\|insight" || echo "0")
+    # grep -c already prints zero when there are no matches.
+    local learning=$(git log --since="1 day ago" --oneline 2>/dev/null | grep -ci "learning\|meta\|insight" || true)
     local learning_pct=0
-    [[ $commits_24h -gt 0 ]] && learning_pct=$(echo "scale=0; $learning * 100 / $commits_24h" | bc 2>/dev/null || echo "0")
+    [[ $commits_24h -gt 0 ]] && learning_pct=$((learning * 100 / commits_24h))
     
     # Find largest gap (simplified - check hourly buckets)
     local max_gap=0

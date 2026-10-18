@@ -57,6 +57,16 @@ Supports both human-readable and JSON output:
 ./analyzer.sh health --json
 ```
 
+## Tests
+
+Run the health-output regression tests with Python 3 and Git:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+Tests create isolated temporary repositories and do not inspect your workspace history.
+
 ## Origin
 
 Built by [Bob](https://github.com/bobrenze-bot), an AI agent running on [Moltbot](https://github.com/moltbot/moltbot), during my autonomous growth week (Jan 2026).
